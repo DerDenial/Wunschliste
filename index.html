@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080808">
+  <meta name="description" content="Eine Wunschliste zum Stöbern, Sortieren und Filtern.">
+  <title>Wunschliste</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..900&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="icon-bookmark" viewBox="0 0 24 24">
+      <path d="M6 5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v15l-6-4-6 4z"/>
+    </symbol>
+    <symbol id="icon-external" viewBox="0 0 24 24">
+      <path d="M13.5 4H20v6.5M20 4l-9 9M9 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-3"/>
+    </symbol>
+    <symbol id="icon-sort" viewBox="0 0 24 24">
+      <path d="M8 5v14m-4-4 4 4 4-4M16 19V5m-4 4 4-4 4 4"/>
+    </symbol>
+    <symbol id="icon-filter" viewBox="0 0 24 24">
+      <path d="M4 7h16M4 17h16"/>
+      <circle cx="9" cy="7" r="2.25" class="icon-knob"/>
+      <circle cx="15" cy="17" r="2.25" class="icon-knob"/>
+    </symbol>
+    <symbol id="icon-check" viewBox="0 0 24 24">
+      <path d="m5 12 4 4L19 6"/>
+    </symbol>
+    <symbol id="icon-menu" viewBox="0 0 24 24">
+      <path d="M4.5 6h15m-15 6h15m-15 6h15"/>
+    </symbol>
+    <symbol id="icon-close" viewBox="0 0 24 24">
+      <path d="m6 6 12 12M18 6 6 18"/>
+    </symbol>
+    <symbol id="icon-image" viewBox="0 0 24 24">
+      <rect x="3.5" y="4.5" width="17" height="15" rx="2"/>
+      <circle cx="8.5" cy="9" r="1.25"/>
+      <path d="m4 16 4-3 3.5 2.5 4.5-5 4.5 5"/>
+    </symbol>
+  </svg>
+
+  <main class="page">
+    <header class="page-header">
+      <div class="page-heading">
+        <span class="page-mark">
+          <svg class="icon" aria-hidden="true"><use href="#icon-bookmark"></use></svg>
+        </span>
+        <h1>Wunschliste<span aria-hidden="true">.</span></h1>
+      </div>
+      <div class="list-meta">
+        <p id="wish-count" class="wish-count" aria-live="polite"></p>
+        <p id="active-filters" class="active-filters" hidden></p>
+      </div>
+    </header>
+
+    <div id="wish-grid" class="wish-grid" role="region" aria-label="Wünsche" aria-busy="true"></div>
+    <div id="list-state" class="list-state">
+      <p id="list-message" role="status">Wünsche werden geladen …</p>
+      <button id="retry" class="text-button" type="button" hidden>Erneut laden</button>
+    </div>
+    <noscript><p class="noscript">Aktiviere JavaScript, um die Wunschliste zu laden.</p></noscript>
+  </main>
+
+  <nav class="dock" aria-label="Wunschliste bearbeiten">
+    <button id="menu-trigger" class="menu-trigger" type="button" popovertarget="controls-panel" aria-haspopup="dialog" aria-label="Wunschlisten-Menü" disabled>
+      <svg class="icon menu-icon" aria-hidden="true"><use href="#icon-menu"></use></svg>
+      <svg class="icon menu-close-icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+      <span id="menu-filter-count" class="filter-count menu-filter-count" aria-hidden="true" hidden></span>
+    </button>
+  </nav>
+
+  <section id="controls-panel" class="panel" data-view="menu" popover role="dialog" aria-label="Wunschlisten-Menü">
+    <div class="menu-actions" data-control-view="menu">
+      <button id="sort-trigger" class="menu-action" type="button" disabled>
+        <svg class="icon" aria-hidden="true"><use href="#icon-sort"></use></svg>
+        <span>Sortieren</span>
+      </button>
+      <button id="filter-trigger" class="menu-action" type="button" disabled>
+        <svg class="icon" aria-hidden="true"><use href="#icon-filter"></use></svg>
+        <span>Filtern</span>
+        <span id="filter-count" class="filter-count" aria-hidden="true" hidden></span>
+      </button>
+    </div>
+
+    <div data-control-view="sort" hidden>
+      <div class="panel-header">
+        <h2>Sortieren</h2>
+        <button id="sort-back" class="back-button" type="button">Zurück</button>
+      </div>
+      <div class="sort-options">
+        <button class="sort-option" type="button" data-sort="original" aria-pressed="true">Standard</button>
+        <button class="sort-option" type="button" data-sort="price-asc" aria-pressed="false">Preis aufsteigend</button>
+        <button class="sort-option" type="button" data-sort="price-desc" aria-pressed="false">Preis absteigend</button>
+        <button class="sort-option" type="button" data-sort="name-asc" aria-pressed="false">Name A–Z</button>
+        <button class="sort-option" type="button" data-sort="name-desc" aria-pressed="false">Name Z–A</button>
+      </div>
+    </div>
+
+    <div data-control-view="filter" hidden>
+      <div class="panel-header">
+        <h2 id="filter-title" tabindex="-1">Filtern</h2>
+        <button id="filter-back" class="back-button" type="button">Zurück</button>
+      </div>
+      <fieldset class="category-fieldset">
+        <legend>Kategorien</legend>
+        <div id="category-options" class="category-options"></div>
+      </fieldset>
+      <div id="price-filter" class="price-filter">
+        <div class="price-filter-heading">
+          <label for="max-price">Maximaler Preis</label>
+          <output id="price-value" for="max-price">Alle Preise</output>
+        </div>
+        <input id="max-price" type="range" min="0" max="0" value="0">
+        <div class="price-endpoints" aria-hidden="true">
+          <span id="price-min"></span>
+          <span id="price-max"></span>
+        </div>
+      </div>
+      <button id="reset-filters" class="reset-button" type="button">Filter zurücksetzen</button>
+    </div>
+  </section>
+
+  <template id="wish-template">
+    <article class="wish-card">
+      <span class="wish-category"></span>
+      <div class="wish-media">
+        <img class="wish-image" alt="" width="444" height="444" decoding="async">
+        <span class="image-fallback" hidden>
+          <svg class="icon" aria-hidden="true"><use href="#icon-image"></use></svg>
+          Bild nicht verfügbar
+        </span>
+      </div>
+      <div class="wish-copy">
+        <h2 class="wish-name"></h2>
+        <p class="wish-subtitle"></p>
+        <p class="wish-price"></p>
+      </div>
+      <span class="wish-notch" aria-hidden="true"></span>
+      <a class="wish-link" target="_blank" rel="noopener">
+        <svg class="icon" aria-hidden="true"><use href="#icon-external"></use></svg>
+      </a>
+    </article>
+  </template>
+</body>
+</html>
+
