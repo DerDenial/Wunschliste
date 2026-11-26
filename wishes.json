@@ -78,5 +78,15 @@
     "category": "Parfum",
     "image": "https://cdn.flaconi.net/media/catalog/product/3/6/3614273638869-1_c_live.jpeg?r=1WAII9&c=de&w=640&q=80",
     "url": "https://www.flaconi.de/parfum/azzaro/the-most-wanted/azzaro-the-most-wanted-le-parfum-parfum.html?variant=80067292-50"
+  },
+  {
+    "id": 9,
+    "name": "UGREEN Laptop Ständer",
+    "subtitle": "Aluminium Laptop Ständer",
+    "price": 20.39,
+    "currency": "€",
+    "category": "Technik",
+    "image": "https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/61l-UjRl2aL._AC_SL1500_.jpg",
+    "url": "https://amzn.eu/d/005jcELp"
   }
 ]
